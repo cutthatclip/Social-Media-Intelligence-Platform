@@ -1,11 +1,11 @@
 # Social-Media-Intelligence-Platform
-# Zionist Social Media Agent
+# AI Social Media Content Agent
 
 ## Overview
 
 An AI-powered content generation workflow that monitors news sources, evaluates relevance, and creates ready-to-review social media content packages.
 
-The system automatically ingests news articles from RSS feeds, analyzes them using OpenAI, and generates platform-specific content including LinkedIn posts, X/Twitter posts, summaries, framing recommendations, and image generation prompts.
+The system automatically ingests news articles from RSS feeds, analyzes them using AI, and generates platform-specific content including LinkedIn posts, X/Twitter posts, summaries, framing recommendations, and image generation prompts.
 
 ## Problem
 
@@ -21,7 +21,7 @@ This process is repetitive and time-consuming.
 
 ## Solution
 
-The Zionist Social Media Agent automates the content creation workflow by:
+The AI Social Media Content Agent automates the content creation workflow by:
 
 1. Monitoring news feeds
 2. Evaluating article relevance
@@ -52,7 +52,7 @@ RSS Feed → AI Analysis → JSON Processing → Relevance Filter → Content De
 
 ## Example Output
 
-* Relevance Score
+* Relevance Assessment
 * Executive Summary
 * Why It Matters Analysis
 * LinkedIn Post
@@ -70,3 +70,13 @@ See the screenshots folder for workflow configuration and generated output examp
 * Scheduled content delivery
 * Sentiment analysis
 * Multi-platform publishing
+
+## Use Cases
+
+* Marketing teams
+* Nonprofits
+* Advocacy organizations
+* Industry associations
+* Small businesses
+* Content creators
+* Communications departments
