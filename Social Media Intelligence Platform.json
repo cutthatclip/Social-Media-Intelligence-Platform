@@ -1,0 +1,243 @@
+{
+  "name": "Social Media Intelligence Platform",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 0
+            }
+          ]
+        },
+        "feedUrl": "https://www.timesofisrael.com/feed/"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "25f9ab72-e0dd-4a7d-87d0-fe4e094580b9",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 0
+            }
+          ]
+        },
+        "feedUrl": "https://www.jpost.com/rss/rssfeedsfrontpage.aspx"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        176
+      ],
+      "id": "f52fc117-52eb-4669-b87a-32dc86cd779b",
+      "name": "RSS Feed Trigger1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ARTICLE TITLE:\n{{ $json.title }}\n\nARTICLE SUMMARY:\n{{ $json.contentSnippet }}\n\nARTICLE URL:\n{{ $json.link }}\n\nFULL CONTENT:\n{{ $json.content }}",
+        "options": {
+          "systemMessage": "=You are a professional social media strategist for a pro-Israel advocacy organization.\n\nAnalyze the following news article and determine whether it would be valuable content for the organization's social media audience.\n\nARTICLE TITLE:\n{{ $json.title }}\n\nARTICLE SUMMARY:\n{{ $json.contentSnippet }}\n\nARTICLE LINK:\n{{ $json.link }}\n\nTasks:\n\n1. Determine if this article is relevant to a pro-Israel audience.\n\n2. If relevant, provide:\n   - A brief summary (2-3 sentences)\n   - Why this story matters (1-2 sentences)\n   - The strongest framing angle\n   - A LinkedIn post\n   - An X/Twitter post\n   - A professional AI image generation prompt\n\n3. If not relevant, set \"relevant\" to false and explain why.\n\nReturn ONLY valid JSON in the following format:\n\n{\n  \"relevant\": true,\n  \"reason\": \"\",\n  \"summary\": \"\",\n  \"why_it_matters\": \"\",\n  \"framing\": \"\",\n  \"linkedin_post\": \"\",\n  \"twitter_post\": \"\",\n  \"image_prompt\": \"\"\n}\n\nGuidelines:\n\n- Focus on facts and information contained in the article.\n- Do not invent details.\n- LinkedIn posts should be professional, thoughtful, and 100-200 words.\n- Twitter/X posts should be concise and under 280 characters.\n- Image prompts should describe realistic, professional, news-style imagery suitable for social media.\n- Return valid JSON only with no markdown, explanations, or additional text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "81097173-3486-4564-8250-aad23e9e7992",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        256
+      ],
+      "id": "b68e07b9-cf38-4018-8af4-1646fe68b96d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.parse($json.output) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "5c7a6ce9-6f3b-4aef-aedf-5307c2f83e75",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f46d222a-2058-4fa4-821c-9c99bfdd989a",
+              "leftValue": "={{ $json.relevant }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        768,
+        0
+      ],
+      "id": "3f3736ef-56bc-4f27-bd4f-2379b020efac",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "client@example.com",
+        "subject": "Social Media Proposal",
+        "emailType": "text",
+        "message": "=SUMMARY\n{{ $json.summary }}\n\nWHY IT MATTERS\n{{ $json.why_it_matters }}\n\nFRAMING\n{{ $json.framing }}\n\nLINKEDIN POST\n{{ $json.linkedin_post }}\n\nTWITTER POST\n{{ $json.twitter_post }}\n\nIMAGE PROMPT\n{{ $json.image_prompt }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        -16
+      ],
+      "id": "cdcc6b06-0efa-479a-b049-55169f0171d0",
+      "name": "Send a message",
+      "webhookId": "d9a049f2-c6ab-4ec6-9a80-12ebfd8589d1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dK4wFvmrmqxESrea",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "abc653ef-6810-4853-a6a6-11cf2049f14d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9410e772daee96c20e46dc288619183287bab1a8525207a24695b4ce2c30098d"
+  },
+  "id": "QEvYFBOG7xFkyt9L",
+  "tags": []
+}
